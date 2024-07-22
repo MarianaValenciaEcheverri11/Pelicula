@@ -18,7 +18,7 @@ Actúa como intermediario entre el Model y la View. Prepara los datos del modelo
 ### Interacción entre componentes:
 
 View observa las propiedades del ViewModel para detectar cambios en los datos.
-View envía acciones al VistaModeloViewModel en respuesta a las interacciones del usuario.
+View envía acciones al ViewModel en respuesta a las interacciones del usuario.
 ViewModel accede al Model para obtener o actualizar datos.
 ViewModel notifica a la vista sobre cambios en los datos, lo que actualiza la interfaz de usuario.
 
