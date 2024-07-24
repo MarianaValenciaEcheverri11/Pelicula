@@ -1,5 +1,6 @@
 //
 //  Movie.swift
+
 //  Peliculas
 //
 //  Created by Mariana Valencia Echeverri on 24/07/24.
@@ -8,7 +9,7 @@
 import Foundation
 
 struct Movie: Codable, Hashable {
-    let id: String?
+    let id: Int?
     let title: String?
     let adult: Bool?
     let backdropPath: String?

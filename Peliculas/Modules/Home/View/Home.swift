@@ -19,7 +19,7 @@ struct Home: View {
     
     @State private var selectedSection: String = SectionType.popular.rawValue
     @State private var selectedFilter: String = FilterType.adult.rawValue
-    @State private var searchText: String = String.empty
+    @State private var searchText: String = .empty
     @State private var movies: [Movie] = []
     private let allSectionTypes: [String] = SectionType.allCases.map { $0.rawValue }
     private let allFilterTypes: [String] = FilterType.allCases.map { $0.rawValue }
@@ -29,20 +29,32 @@ struct Home: View {
     var body: some View {
         VStack(spacing: .zero) {
             filter
-            searchEngine
-            Spacer()
-            picker
+            NavigationStack {
+                moviesView
+                Spacer()
+                picker
+            }
+            .onChange(of: selectedSection, perform: { newValue in
+                displayMovies(with: movies)
+            })
+            .searchable(text: $searchText)
+
         }
         .onAppear(perform: onAppear)
     }
     
-    private var searchEngine: some View {
-        NavigationStack {
+    private var moviesView: some View {
+        ScrollView {
             ForEach (movies, id: \.self) { movie in
-                Text(movie.title ?? .empty)
+                MovieCell(
+                    imageUrl: viewModel.getImageUrl(with: movie.backdropPath ?? .empty),
+                    title: movie.title ?? .empty)
+                .padding(.horizontal, Constants.horizontalPadding)
+                Divider()
+                    .background(Color.black)
             }
         }
-        .searchable(text: $searchText)
+
     }
     
     private var filter: some View {
@@ -82,7 +94,13 @@ struct Home: View {
 extension Home: HomeViewDelegate {
     
     func displayMovies(with movies: [Movie]) {
-        self.movies = movies
-        print(movies)
+        switch SectionType(rawValue: selectedSection) {
+        case .popular:
+            self.movies = movies.sorted(by: { $0.popularity ?? 0 > $1.popularity ?? 0 })
+        case .topRated:
+            self.movies = movies.sorted(by: { $0.voteCount ?? 0 > $1.voteCount ?? 0 })
+        case .none:
+            break
+        }
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 
 protocol HomeViewModelProtocol {
     func viewDidLoad() async
+    func getImageUrl(with path: String) -> String
 }
 
 class HomeViewModel: HomeViewModelProtocol  {
@@ -19,6 +20,10 @@ class HomeViewModel: HomeViewModelProtocol  {
 
     func viewDidLoad() async {
         await getMovies()
+    }
+    
+    func getImageUrl(with path: String) -> String {
+        services.getImageUrl(with: path)
     }
 }
 

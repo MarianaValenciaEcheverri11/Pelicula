@@ -24,7 +24,6 @@ struct Constans {
     }
 }
 
-//AÑADIR BEAREAR
 
 class Services {
     
@@ -88,5 +87,9 @@ class Services {
                 completion(.failure(.formatIncorrect))
             }
         }.resume()
+    }
+    
+    func getImageUrl(with path: String) -> String {
+        Apis.BASE_API_URL_IMAGE + path
     }
 }
