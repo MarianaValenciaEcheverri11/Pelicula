@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 protocol HomeViewModelProtocol {
     func viewDidLoad() async
@@ -16,7 +15,7 @@ protocol HomeViewModelProtocol {
 class HomeViewModel: HomeViewModelProtocol  {
     
     var view: HomeViewDelegate?
-    var services = Services()
+    var services: ServiceProtocol = Services()
 
     func viewDidLoad() async {
         await getMovies()

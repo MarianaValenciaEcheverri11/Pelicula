@@ -12,51 +12,27 @@ enum MovieError: Error {
     case invalidUrl
 }
 
-struct Constans {
+struct Constants {
+ 
     struct Urls {
         static func getMovie(id: String) -> URL? {
-            return URL(string: "\(Apis.BASE_API_URL)movie/\(id)?api_key=c1bedc54a1f90699c12c699ea882a9a1")
+            return URL(string: "\(Apis.BASE_API_URL)movie/\(id)?api_key=\(getApiKey())")
         }
         
         static func getMovies() -> URL? {
-            return URL(string: "\(Apis.BASE_API_URL)discover/movie?api_key=c1bedc54a1f90699c12c699ea882a9a1")
+            return URL(string: "\(Apis.BASE_API_URL)discover/movie?api_key=\(getApiKey())")
+        }
+        
+        static func getApiKey() -> String {
+            ProcessInfo.processInfo.environment["API_KEY"] ?? .empty
         }
     }
 }
 
-
-class Services {
+class Services: ServiceProtocol {
     
-    func getMovieAsync(id: String) async throws -> Movie {
-        try await withCheckedThrowingContinuation { continuation in
-            getMovie(id: id) { result in
-                switch result {
-                    case .success(let movie):
-                        continuation.resume(returning: movie)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-    
-    func getMovie(id: String, completion: @escaping (Result<Movie, MovieError>) -> Void) {
-        let urlSession = URLSession.shared
-        guard let url = Constans.Urls.getMovie(id: id) else {
-            return completion(.failure(.invalidUrl))
-        }
-        
-        urlSession.dataTask(with: url) { data, response, error in
-            do {
-                if let data = data {
-                    let movie = try JSONDecoder().decode(Movie.self, from: data)
-                    completion(.success(movie))
-
-                }
-            } catch {
-                completion(.failure(.formatIncorrect))
-            }
-        }.resume()
+    func getImageUrl(with path: String) -> String {
+        Apis.BASE_API_URL_IMAGE + path
     }
     
     func getMoviesAsync() async throws ->  MovieSet {
@@ -72,9 +48,9 @@ class Services {
         }
     }
     
-    func getMovies(completion: @escaping (Result<MovieSet, MovieError>) -> Void) {
+    private func getMovies(completion: @escaping (Result<MovieSet, MovieError>) -> Void) {
         let urlSession = URLSession.shared
-        guard let url = Constans.Urls.getMovies() else {
+        guard let url = Constants.Urls.getMovies() else {
             return completion(.failure(.invalidUrl))
         }
         urlSession.dataTask(with: url) { data, response, error in
@@ -87,9 +63,5 @@ class Services {
                 completion(.failure(.formatIncorrect))
             }
         }.resume()
-    }
-    
-    func getImageUrl(with path: String) -> String {
-        Apis.BASE_API_URL_IMAGE + path
     }
 }

@@ -14,7 +14,7 @@ protocol HomeViewDelegate {
 struct Home: View {
     
     private struct Constants {
-        static let horizontalPadding: CGFloat = 16
+        static let horizontalPadding: CGFloat = 24
         static let noResultsFoundText: String = "No results found"
         static let originalLanguage: String = "en"
         static let mainTitle: String = "Películas"
@@ -98,8 +98,7 @@ struct Home: View {
         guard inputText != .empty else { return }
         let searchText = inputText.lowercased()
         self.moviesFiltered = self.movies.filter { movie in
-            guard let title = movie.title else { return false }
-            return title.lowercased().contains(searchText)
+            return movie.title.lowercased().contains(searchText)
         }
     }
     
@@ -110,8 +109,8 @@ struct Home: View {
     private func getMoviesCells() -> any View {
         ForEach (moviesFiltered, id: \.self) { movie in
             MovieCell(
-                imageUrl: viewModel.getImageUrl(with: movie.backdropPath ?? .empty),
-                title: movie.title ?? .empty)
+                imageUrl: viewModel.getImageUrl(with: movie.backdropPath),
+                title: movie.title)
             .padding(.horizontal, Constants.horizontalPadding)
             Divider()
                 .background(Color.black)
@@ -126,10 +125,10 @@ struct Home: View {
             }
         case .adult:
             self.moviesFiltered = movies.filter { movie in
-                return movie.adult ?? false
+                return movie.adult
             }
         case .voteAverage:
-            self.moviesFiltered = movies.sorted(by: { $0.voteAverage ?? 0 > $1.voteAverage ?? 0 })
+            self.moviesFiltered = movies.sorted(by: { $0.voteAverage > $1.voteAverage })
         case .none:
             break
         }
@@ -142,9 +141,9 @@ extension Home: HomeViewDelegate {
         self.movies = movies
         switch SectionType(rawValue: selectedSection) {
         case .popular:
-            self.moviesFiltered = movies.sorted(by: { $0.popularity ?? 0 > $1.popularity ?? 0 })
+            self.moviesFiltered = movies.sorted(by: { $0.popularity > $1.popularity })
         case .topRated:
-            self.moviesFiltered = movies.sorted(by: { $0.voteCount ?? 0 > $1.voteCount ?? 0 })
+            self.moviesFiltered = movies.sorted(by: { $0.voteCount > $1.voteCount })
         case .none:
             break
         }
