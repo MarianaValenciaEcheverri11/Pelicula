@@ -8,7 +8,7 @@
 import Foundation
 
 enum FilterType: String, CaseIterable {
+    case originalLanguage = "Original language EN"
     case adult = "Adult"
-    case original_language = "Original language"
-    case vote_average = "Vote average"
+    case voteAverage = "Vote average"
 }
